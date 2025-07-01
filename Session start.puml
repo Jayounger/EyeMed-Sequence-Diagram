@@ -19,6 +19,4 @@ endif
 :Reset the session expired time of redis;
 :Insert a visit log;
 stop
-
-
 @enduml
