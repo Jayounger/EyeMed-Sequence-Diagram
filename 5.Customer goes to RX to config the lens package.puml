@@ -1,0 +1,19 @@
+@startuml
+title User clicks Apply insurance
+actor Customer
+participant FE #abcaff
+participant "Direct Billing Bundle UI" #c3ffcd
+participant "Webservice" #abcaff
+participant "Commerce Insurance" #abcaff
+participant "Commerce Customer" #abcaff
+participant "2019" #abcaff
+participant "Direct Billing Backend" #c3ffcd
+database "Redis" #yellow
+database "Mysql" #fdda14
+
+autonumber
+Customer -> "Direct Billing Bundle UI":User fills in the insurance account and clicks the "Apply insurance"
+"Direct Billing Bundle UI" -> FE:Hook function getCustomer
+
+@enduml
+

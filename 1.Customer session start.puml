@@ -1,0 +1,53 @@
+@startuml
+title Session start
+actor Customer
+participant FE #abcaff
+participant "Direct Billing Bundle UI" #c3ffcd
+participant "Webservice" #abcaff
+participant "Commerce Insurance" #abcaff
+participant "Commerce Customer" #abcaff
+participant "2019" #abcaff
+participant "Direct Billing Backend" #c3ffcd
+database "Redis" #yellow
+database "Mysql" #fdda14
+
+autonumber
+Customer -> FE:Customer opens our website
+FE -> "Direct Billing Bundle UI":load & initialize UI bundle
+"Direct Billing Bundle UI" --> FE:Response
+FE -> "Webservice":POST /insurance/session-start
+"Webservice" -> "Commerce Insurance":POST /session-start
+"Commerce Insurance" -> "Redis":Get the session status
+alt Session has started
+    "Commerce Insurance" -> "Mysql":Insert a visit log
+    "Commerce Insurance" --> "Webservice":Response
+    "Webservice" --> FE:Response
+else Session has not started
+     alt "If it is a logged-in customer"
+        "Commerce Insurance" -> "Commerce Customer":GET /users/{user-id}
+        "Commerce Customer" --> "Commerce Insurance":response
+     end
+     alt "If the cart is not empty"
+        "Commerce Insurance" -> 2019:POST /cart
+        2019 --> "Commerce Insurance":response
+     end
+     "Commerce Insurance" -> "Direct Billing Backend":POST /commerce-session/start
+     "Direct Billing Backend" --> "Commerce Insurance":response
+     alt "If the response include insurance details"
+        "Commerce Insurance" -> "Mysql":Insert the insurance details
+     end
+     "Commerce Insurance" -> "Mysql":Insert a visit log
+     "Commerce Insurance" --> "Webservice":Response
+     "Webservice" --> FE:Response
+end
+
+alt "If it is a logged-in customer"
+    FE -> "Webservice":GET /v1/users/{user_id}
+    "Webservice" -> "Commerce Customer":GET /users/{user-id}
+    "Commerce Customer" --> "Webservice":response
+    "Webservice" -->FE:response
+end
+FE -> "Direct Billing Bundle UI":Send customer info
+
+@enduml
+

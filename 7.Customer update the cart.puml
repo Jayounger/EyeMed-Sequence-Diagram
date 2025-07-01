@@ -1,0 +1,32 @@
+@startuml
+title User clicks Apply insurance
+actor Customer
+participant FE #abcaff
+participant "Direct Billing Bundle UI" #c3ffcd
+participant "2019" #abcaff
+participant "Webservice" #abcaff
+participant "Commerce Insurance" #abcaff
+participant "Commerce Customer" #abcaff
+participant "Direct Billing Backend" #c3ffcd
+database "Redis" #yellow
+database "Mysql" #fdda14
+
+autonumber
+Customer -> FE:Update the products of cart
+FE -> 2019:POST /cart
+2019 -> 2019:Update the cart
+2019 -> "Commerce Insurance":POST /carts/{cart-id}/products
+"Commerce Insurance" -> "Direct Billing Backend":POST /carts/{cart-id}/products
+alt If the insurance details has updated
+    "Direct Billing Backend" --> "Commerce Insurance":Response the new insurance details
+    "Commerce Insurance" -> "Mysql":Insert the insurance details
+    "Mysql" --> "Commerce Insurance":Response
+else
+    "Direct Billing Backend" --> "Commerce Insurance":Response {}
+end
+"Commerce Insurance" --> 2019:Response
+"2019" -> FE:Response
+FE -> FE:Refresh the product list and cart total price on the page. Refresh the quick cart.
+
+@enduml
+

@@ -1,0 +1,23 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+:Get the session status from redis;
+if (The redis value is empty?) then (true)
+  :Get the last visit log;
+  if (The visit log is not empty?) then (true)
+
+      if (The visit log has not ended?) then (true)
+          :Send the session end request;
+      else (false)
+      endif
+  else (false)
+  endif
+      :Send the session start request;
+else (false)
+endif
+:Reset the session expired time of redis;
+:Insert a visit log;
+stop
+
+@enduml
