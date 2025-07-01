@@ -15,5 +15,6 @@ autonumber
 Customer -> "Direct Billing Bundle UI":User fills in the insurance account and clicks the "Apply insurance"
 "Direct Billing Bundle UI" -> FE:Hook function getCustomer
 
+
 @enduml
 
