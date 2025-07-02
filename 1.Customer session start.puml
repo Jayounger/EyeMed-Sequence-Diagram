@@ -18,26 +18,77 @@ FE -> "Direct Billing Bundle UI":load & initialize UI bundle
 FE -> "Webservice":POST /insurance/session-start
 "Webservice" -> "Commerce Insurance":POST /session-start
 "Commerce Insurance" -> "Redis":Get the session status
-alt Session has started
+
+alt If the session cache is not empty
     "Commerce Insurance" -> "Mysql":Insert a visit log
     "Commerce Insurance" --> "Webservice":Response
     "Webservice" --> FE:Response
-else Session has not started
-     alt "If it is a logged-in customer"
-        "Commerce Insurance" -> "Commerce Customer":GET /users/{user-id}
-        "Commerce Customer" --> "Commerce Insurance":response
-     end
-     alt "If the cart is not empty"
-        "Commerce Insurance" -> 2019:POST /cart
-        2019 --> "Commerce Insurance":response
-     end
-     "Commerce Insurance" -> "Direct Billing Backend":POST /commerce-session/start
-     "Direct Billing Backend" --> "Commerce Insurance":response
-     alt "If the response include insurance details"
-        "Commerce Insurance" -> "Mysql":Insert the insurance details
-     end
-     "Commerce Insurance" -> "Mysql":Insert a visit log
-     "Commerce Insurance" --> "Webservice":Response
+else If the session cache is empty
+    "Commerce Insurance" -> "Mysql":Get the last session log
+    alt If the session log is empty
+        alt "If it is a logged-in customer"
+           "Commerce Insurance" -> "Commerce Customer":GET /users/{user-id}
+           "Commerce Customer" --> "Commerce Insurance":response
+        end
+        alt "If the cart is not empty"
+           "Commerce Insurance" -> 2019:POST /cart
+           2019 --> "Commerce Insurance":response
+        end
+        "Commerce Insurance" -> "Direct Billing Backend":POST /commerce-session/start
+        "Direct Billing Backend" --> "Commerce Insurance":Response
+        alt "If the response include insurance details"
+            "Commerce Insurance" -> "Mysql":Insert the insurance details
+        end
+        note right
+            This is the customer's first visit to the website
+        end note
+        "Commerce Insurance" -> "Mysql":Insert session log
+        "Mysql" --> "Commerce Insurance":Response
+        "Commerce Insurance" -> "Redis":Set session status
+    else If the session log is not empty
+        alt If the last session log has ended
+            alt "If it is a logged-in customer"
+               "Commerce Insurance" -> "Commerce Customer":GET /users/{user-id}
+               "Commerce Customer" --> "Commerce Insurance":response
+            end
+            alt "If the cart is not empty"
+               "Commerce Insurance" -> 2019:POST /cart
+               2019 --> "Commerce Insurance":response
+            end
+            "Commerce Insurance" -> "Direct Billing Backend":POST /commerce-session/start
+            "Direct Billing Backend" --> "Commerce Insurance":Response
+            alt "If the response include insurance details"
+                "Commerce Insurance" -> "Mysql":Insert the insurance details
+            end
+            "Commerce Insurance" -> "Mysql":Insert session log
+            "Mysql" --> "Commerce Insurance":Response
+            "Commerce Insurance" -> "Redis":Set session status
+        else If the last session log has not ended
+            alt If the last session is expired
+                "Commerce Insurance" -> "Direct Billing Backend":POST /commerce-session/end
+                "Direct Billing Backend" --> "Commerce Insurance":Response
+                alt "If it is a logged-in customer"
+                   "Commerce Insurance" -> "Commerce Customer":GET /users/{user-id}
+                   "Commerce Customer" --> "Commerce Insurance":response
+                end
+                alt "If the cart is not empty"
+                   "Commerce Insurance" -> 2019:POST /cart
+                   2019 --> "Commerce Insurance":response
+                end
+                "Commerce Insurance" -> "Direct Billing Backend":POST /commerce-session/start
+                "Direct Billing Backend" --> "Commerce Insurance":Response
+                alt "If the response include insurance details"
+                    "Commerce Insurance" -> "Mysql":Insert the insurance details
+                end
+                "Commerce Insurance" -> "Mysql":Insert session log
+                "Mysql" --> "Commerce Insurance":Response
+                "Commerce Insurance" -> "Redis":Set session status
+            else If the last session is not expired
+                "Commerce Insurance" -> "Commerce Insurance":<font color=red>????
+            end
+        end
+    end
+    "Commerce Insurance" --> "Webservice":Response
      "Webservice" --> FE:Response
 end
 

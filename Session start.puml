@@ -4,10 +4,10 @@
 start
 :Get the session status from redis;
 if (The redis value is empty?) then (true)
-  :Get the last visit log;
-  if (The visit log is not empty?) then (true)
+  :Get the last session log;
+  if (The session log is not empty?) then (true)
 
-      if (The visit log has not ended?) then (true)
+      if (The session log is expired?) then (true)
           :Send the session end request;
       else (false)
       endif
@@ -16,7 +16,7 @@ if (The redis value is empty?) then (true)
       :Send the session start request;
 else (false)
 endif
-:Reset the session expired time of redis;
+:Set the cache of the session to expire after 30 minutes;
 :Insert a visit log;
 stop
 @enduml

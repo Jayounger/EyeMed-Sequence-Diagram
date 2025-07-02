@@ -1,0 +1,20 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+:Find out the latest session record of each user with status=1 and notify_status=0 limit 1000;
+:Foreach those records;
+:Check again whether it is still the latest active record of this user;
+if (It is latest active record?) then (true)
+    :Call session end API;
+    if (The session end request is successful) then (true)
+        :Update the record to session end status;
+    else (false)
+        :Increment the value of "notify_attempts" by 1 for the record;
+    endif
+else (false)
+
+endif
+
+stop
+@enduml
