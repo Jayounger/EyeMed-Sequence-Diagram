@@ -1,5 +1,5 @@
 @startuml
-title User clicks Apply insurance
+title Users turn on insurance toggle again
 actor Customer
 participant FE #abcaff
 participant "Direct Billing Bundle UI" #c3ffcd
@@ -12,7 +12,7 @@ database "Redis" #yellow
 database "Mysql" #fdda14
 
 autonumber
-Customer -> "Direct Billing Bundle UI":User fills in the insurance account and clicks the "Apply insurance"
+Customer -> "Direct Billing Bundle UI":User turns on insurance toggle
 '"Direct Billing Bundle UI" -> FE:Hook function getCustomer
 'alt If it is a guest user
 '    FE --> "Direct Billing Bundle UI":Response guest user info
@@ -36,15 +36,24 @@ Customer -> "Direct Billing Bundle UI":User fills in the insurance account and c
 
 "Direct Billing Bundle UI" -> "Direct Billing Backend": PUT /claim-records
 
-"Direct Billing Backend" -> "Webservice":POST /update-insurance-details <font color=blue>QUOTE_APPLIED
+"Direct Billing Backend" -> "Webservice":POST /update-insurance-details <font color=#27ad9a>QUOTE_APPLIED
 "Webservice" -> "Commerce Insurance":POST /update-insurance-details
 "Commerce Insurance" -> "Mysql":Insert insurance details
 "Mysql" --> "Commerce Insurance":Response
 "Commerce Insurance" --> "Webservice":Response
 "Webservice" --> "Direct Billing Backend":Response
-"Direct Billing Backend" --> "Direct Billing Bundle UI":Insurance toggle is in status synced
-"Direct Billing Bundle UI" -> FE:Trigger refresh the discount price
-FE -> FE:Refresh the discount price
+"Direct Billing Backend" --> "Direct Billing Bundle UI":Insurance toggle status is synced
+alt If on PDP and RX pages 
+"Direct Billing Bundle UI" -> FE:Trigger onAddSyncInsuranceListener event
+FE -> "Direct Billing Bundle UI":Trigger onRequestProductQuote event
+"Direct Billing Bundle UI" --> FE:Response
+FE -> FE:Update the discount price on PDP and RX pages
+else If on cart page or other pages with quick cart
+"Direct Billing Bundle UI" -> FE:Hook function refreshCart
+FE -> 2019:GET /cart
+2019 --> FE:Response
+FE -> FE:Update the discount price on cart page and quick cart
+end
 
 @enduml
 
