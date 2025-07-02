@@ -1,0 +1,28 @@
+@startuml
+title User clicks Apply insurance
+actor Customer
+participant FE #abcaff
+participant "Direct Billing Bundle UI" #c3ffcd
+participant "Webservice" #abcaff
+participant "Commerce Insurance" #abcaff
+participant "Commerce Customer" #abcaff
+participant "2019" #abcaff
+participant "Direct Billing Backend" #c3ffcd
+database "Redis" #yellow
+database "Mysql" #fdda14
+
+autonumber
+Customer -> "Direct Billing Bundle UI":Customer turns insurance toggle OFF
+"Direct Billing Bundle UI" -> "Direct Billing Backend":POST /claim-records/{id}/change-use-insurance-status
+"Direct Billing Backend" -> "Webservice":POST /update-insurance-details <font color=red>QUOTE_REMOVED
+"Webservice" -> "Commerce Insurance":POST /update-insurance-details
+"Commerce Insurance" -> "Mysql":Insert insurance details
+"Mysql" --> "Commerce Insurance":Response
+"Commerce Insurance" --> "Webservice":Response
+"Webservice" --> "Direct Billing Backend":Response
+"Direct Billing Backend" --> "Direct Billing Bundle UI":Insurance toggle is in status synced
+'前端逻辑接着画
+
+
+@enduml
+

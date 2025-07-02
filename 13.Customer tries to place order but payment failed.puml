@@ -1,0 +1,24 @@
+@startuml
+title User clicks Apply insurance
+actor Customer
+participant FE #abcaff
+participant "2019" #abcaff
+participant "Commerce Insurance" #abcaff
+participant "Direct Billing Backend" #c3ffcd
+
+autonumber
+Customer -> FE:Click the "Confirm and Pay"
+FE -> 2019:GET /payment/check
+2019 -> "Commerce Insurance":POST /carts/{{cart-id}}/update-status ORDER_PLACE_STARTED
+"Commerce Insurance" -> "Direct Billing Backend":POST /carts/{{cart-id}}/update-status ORDER_PLACE_STARTED
+"Direct Billing Backend" --> "Commerce Insurance":Response insurance details <font color=green>CLAIM_ACCEPTED
+"Commerce Insurance" --> 2019:Response insurance details
+2019 ->2019:Payment failed
+note right
+The claim was submitted but the order was not placed successfully
+end note
+2019 --> FE:Response error message
+FE -> FE:Alert error message
+
+@enduml
+

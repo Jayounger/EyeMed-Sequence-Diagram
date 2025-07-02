@@ -12,7 +12,7 @@ database "Redis" #yellow
 database "Mysql" #fdda14
 
 autonumber
-Customer -> "Direct Billing Bundle UI":User fills in the insurance account and clicks the "Apply insurance"
+Customer -> "Direct Billing Bundle UI":Customer fills in the insurance account and clicks the "Apply insurance"
 "Direct Billing Bundle UI" -> FE:Hook function getCustomer
 
 alt If it is a guest customer
@@ -41,7 +41,7 @@ end
 "Direct Billing Bundle UI" -> "Direct Billing Backend": PUT /claim-records
 
 alt If the quote has applied
-    "Direct Billing Backend" -> "Webservice":POST /update-insurance-details
+    "Direct Billing Backend" -> "Webservice":POST /update-insurance-details <font color=blue>QUOTE_APPLIED
     "Webservice" -> "Commerce Insurance":POST /update-insurance-details
     "Commerce Insurance" -> "Mysql":Insert insurance details
     "Mysql" --> "Commerce Insurance":Response

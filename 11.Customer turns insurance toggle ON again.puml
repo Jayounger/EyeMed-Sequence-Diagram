@@ -1,0 +1,50 @@
+@startuml
+title User clicks Apply insurance
+actor Customer
+participant FE #abcaff
+participant "Direct Billing Bundle UI" #c3ffcd
+participant "Webservice" #abcaff
+participant "Commerce Insurance" #abcaff
+participant "Commerce Customer" #abcaff
+participant "2019" #abcaff
+participant "Direct Billing Backend" #c3ffcd
+database "Redis" #yellow
+database "Mysql" #fdda14
+
+autonumber
+Customer -> "Direct Billing Bundle UI":User fills in the insurance account and clicks the "Apply insurance"
+'"Direct Billing Bundle UI" -> FE:Hook function getCustomer
+'alt If it is a guest user
+'    FE --> "Direct Billing Bundle UI":Response guest user info
+'else If it is a login user
+'    FE -> "Webservice":GET /users/{user-id}
+'    "Webservice" -> "Commerce Customer":GET /users/{user-id}
+'    "Commerce Customer" --> "Webservice":Response
+'    "Webservice" --> FE:Response
+'    FE --> "Direct Billing Bundle UI":Response login user info
+'end
+
+'"Direct Billing Bundle UI" -> FE:hook function getCartItemDetails
+
+'FE -> "Webservice":GET /insurance/cart-products
+'"Webservice" -> "Commerce Insurance":GET /cart-products
+'"Commerce Insurance" -> 2019:GET /cart
+'2019 --> "Commerce Insurance":Response
+'"Commerce Insurance" --> "Webservice":Response
+'"Webservice" --> FE:Response
+'FE --> "Direct Billing Bundle UI":Response product bundle
+
+"Direct Billing Bundle UI" -> "Direct Billing Backend": PUT /claim-records
+
+"Direct Billing Backend" -> "Webservice":POST /update-insurance-details <font color=blue>QUOTE_APPLIED
+"Webservice" -> "Commerce Insurance":POST /update-insurance-details
+"Commerce Insurance" -> "Mysql":Insert insurance details
+"Mysql" --> "Commerce Insurance":Response
+"Commerce Insurance" --> "Webservice":Response
+"Webservice" --> "Direct Billing Backend":Response
+"Direct Billing Backend" --> "Direct Billing Bundle UI":Insurance toggle is in status synced
+"Direct Billing Bundle UI" -> FE:Trigger refresh the discount price
+FE -> FE:Refresh the discount price
+
+@enduml
+
