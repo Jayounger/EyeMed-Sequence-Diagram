@@ -1,5 +1,5 @@
 @startuml
-title User clicks Apply insurance
+title Users select lensPackage in RX
 actor Customer
 participant FE #abcaff
 participant "Direct Billing Bundle UI" #c3ffcd
@@ -13,8 +13,22 @@ database "Mysql" #fdda14
 
 autonumber
 Customer -> "Direct Billing Bundle UI":User fills in the insurance account and clicks the "Apply insurance"
-"Direct Billing Bundle UI" -> FE:Hook function getCustomer
 
+"Direct Billing Bundle UI" -> FE:Trigger onAddSyncInsuranceListener event
+FE -> "Direct Billing Bundle UI":Dispatch onRequestProductQuote event
+"Direct Billing Bundle UI" -> "Direct Billing Backend":Get price
+"Direct Billing Backend" --> "Direct Billing Bundle UI":Response price
+"Direct Billing Bundle UI" --> FE:Response
+FE -> FE:Update the discount price
+FE -> FE:Step by step choose lens package
+FE -> "Direct Billing Bundle UI":Dispatch onRequestProductQuote event
+"Direct Billing Bundle UI" -> "Direct Billing Backend":Get price
+"Direct Billing Backend" --> "Direct Billing Bundle UI":Response price
+"Direct Billing Bundle UI" --> FE:Response
+FE -> FE:Update the discount price
 
+'    note right
+'    The step 24 and the step 26 happen at the same time.
+'    end note
 @enduml
 

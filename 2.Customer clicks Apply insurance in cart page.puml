@@ -12,7 +12,7 @@ database "Redis" #yellow
 database "Mysql" #fdda14
 
 autonumber
-Customer -> "Direct Billing Bundle UI":Customer fills in the insurance account and clicks the "Apply insurance"
+Customer -> "Direct Billing Bundle UI":Customer fills in the insurance account and clicks the button "Apply insurance"
 "Direct Billing Bundle UI" -> FE:Hook function getCustomer
 
 alt If it is a guest customer
@@ -25,10 +25,10 @@ else If it is a login customer
     FE --> "Direct Billing Bundle UI":Response login customer info
 end
 
-"Direct Billing Bundle UI" -> FE:hook function getCartItemDetails
-alt If the cartId is empty
+"Direct Billing Bundle UI" -> FE:Hook function getCartItemDetails
+alt If cartId is empty
     FE --> "Direct Billing Bundle UI":Response {}
-else If the cartId is not empty
+else If cartId is not empty
     FE -> "Webservice":GET /insurance/cart-products
     "Webservice" -> "Commerce Insurance":GET /cart-products
     "Commerce Insurance" -> 2019:GET /cart
@@ -40,18 +40,18 @@ end
 
 "Direct Billing Bundle UI" -> "Direct Billing Backend": PUT /claim-records
 
-alt If the quote has applied
-    "Direct Billing Backend" -> "Webservice":POST /update-insurance-details <font color=blue>QUOTE_APPLIED
+alt If quote has applied
+    "Direct Billing Backend" -> "Webservice":POST /update-insurance-details <font color=#27ad9a>QUOTE_APPLIED
     "Webservice" -> "Commerce Insurance":POST /update-insurance-details
     "Commerce Insurance" -> "Mysql":Insert insurance details
     "Mysql" --> "Commerce Insurance":Response
     "Commerce Insurance" --> "Webservice":Response
     "Webservice" --> "Direct Billing Backend":Response
-    "Direct Billing Backend" --> "Direct Billing Bundle UI":Insurance toggle is in status synced
-    "Direct Billing Bundle UI" -> FE:Trigger the update of the discounted price on the page and quick cart
+    "Direct Billing Backend" --> "Direct Billing Bundle UI":Insurance toggle status is synced
+    "Direct Billing Bundle UI" -> FE:Hook function refreshCart
     FE -> FE:Update the discount price on the page and quick cart
 else If the quote has not applied
-    "Direct Billing Backend" --> "Direct Billing Bundle UI":Insurance toggle is in status synced
+    "Direct Billing Backend" --> "Direct Billing Bundle UI":Insurance toggle status is synced
 end
 @enduml
 

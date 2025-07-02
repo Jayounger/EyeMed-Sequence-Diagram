@@ -1,7 +1,8 @@
 @startuml
-title User clicks Apply insurance
+title Users place order successfully
 actor Customer
 participant FE #abcaff
+participant "Direct Billing Bundle UI" #c3ffcd
 participant "2019" #abcaff
 participant "Commerce Insurance" #abcaff
 participant "Direct Billing Backend" #c3ffcd
@@ -21,6 +22,7 @@ FE -> 2019:GET /payment/check
 2019 --> 2019:Process payment
 2019 -> "Direct Billing Backend":POST /carts/{{cart-id}}/update-status ORDER_PLACE_PLACED
 "Direct Billing Backend" --> 2019:Response
+FE -> "Direct Billing Bundle UI":Trigger onOrderComplete event
 2019 -> FE:Redirect to thankyou page
 
 @enduml

@@ -1,5 +1,5 @@
 @startuml
-title User clicks Apply insurance
+title Users click Insurance different product
 actor Customer
 participant FE #abcaff
 participant "Direct Billing Bundle UI" #c3ffcd
@@ -20,8 +20,10 @@ Customer -> "Direct Billing Bundle UI":Customer clicks "Insure Different Product
 "Mysql" --> "Commerce Insurance":Response
 "Commerce Insurance" --> "Webservice":Response
 "Webservice" --> "Direct Billing Backend":Response
-"Direct Billing Backend" --> "Direct Billing Bundle UI":Insurance toggle is in status synced
-"Direct Billing Bundle UI" -> FE:Trigger the update of the discounted price on the page and quick cart
-FE -> FE:Update the discount price on the page and quick cart
+"Direct Billing Backend" --> "Direct Billing Bundle UI":Response update products
+"Direct Billing Bundle UI" -> FE:Hook function refreshCart
+FE -> 2019:GET /cart
+2019 --> FE:Response
+FE -> FE:Update the discount price on cart page and quick cart
 @enduml
 

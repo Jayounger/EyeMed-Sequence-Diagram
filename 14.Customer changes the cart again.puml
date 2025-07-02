@@ -14,6 +14,7 @@ database "Mysql" #fdda14
 autonumber
 Customer -> FE:Update the products of cart
 FE -> 2019:POST /cart
+FE -> "Direct Billing Bundle UI":Trigger onCartBundleChange event
 2019 -> 2019:Update the cart
 2019 -> "Commerce Insurance":POST /carts/{cart-id}/products
 "Direct Billing Backend" --> "Commerce Insurance":Response the new insurance details
@@ -24,7 +25,9 @@ end note
 "Commerce Insurance" -> "Mysql":Insert the insurance details
 "Mysql" --> "Commerce Insurance":Response
 "Commerce Insurance" --> 2019:Response
-"2019" -> FE:Response
+"2019" --> FE:Response
+"Direct Billing Backend" --> "Direct Billing Bundle UI":Response updated products
+"Direct Billing Bundle UI" -> FE:Hook function refreshCart
 FE -> FE:Refresh the product list and cart total price on the page. Refresh the quick cart.
 
 @enduml

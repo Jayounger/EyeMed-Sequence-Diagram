@@ -1,5 +1,5 @@
 @startuml
-title User clicks Apply insurance
+title Users try to place order but payment failed
 actor Customer
 participant FE #abcaff
 participant "2019" #abcaff
