@@ -2,19 +2,26 @@
 'https://plantuml.com/activity-diagram-beta
 
 start
-:Find out the latest session record of each user with status=1 and notify_status=0 limit 1000;
-:Foreach those records;
-:Check again whether it is still the latest active record of this user;
-if (It is latest active record?) then (true)
-    :Call session end API;
-    if (The session end request is successful) then (true)
-        :Update the record to session end status;
-    else (false)
-        :Increment the value of "notify_attempts" by 1 for the record;
-    endif
+:Get the cronjob status from redis;
+if (Cron job is running?) then (yes)
 else (false)
-
+:Set cron job status to 1 in redis;
+repeat
+:Find sessions with status=1 and expire_time < now (limit 100);
+    :Concurrent processing session;
+    :Check if the session has already ended;
+    if (Session is not ended?) then (yes)
+        :Call session end API;
+        if (API call successful?) then (yes)
+            :Update session status to 0;
+        else (no)
+            :Log error message;
+        endif
+    endif
+repeat while (more sessions?)
+:Remove cronjob status in redis;
 endif
 
 stop
+
 @enduml

@@ -18,7 +18,7 @@ FE -> "Direct Billing Bundle UI":Trigger onCartBundleChange event
 2019 -> 2019:Update the cart
 2019 -> "Commerce Insurance":POST /carts/{cart-id}/products
 "Commerce Insurance" -> "Direct Billing Backend":POST /carts/{cart-id}/products
-alt If toggle on and insurance details has updated
+alt If insurance details has updated
     "Direct Billing Backend" --> "Commerce Insurance":Response new insurance details
     "Commerce Insurance" -> "Mysql":Insert the insurance details
     "Mysql" --> "Commerce Insurance":Response
@@ -26,7 +26,10 @@ else
     "Direct Billing Backend" --> "Commerce Insurance":Response {}
 end
 "Commerce Insurance" --> 2019:Response
-"Direct Billing Backend" --> "Direct Billing Bundle UI":Response updated products
 "2019" -> FE:Redirect to cart page
+FE -> FE:Show cart page
+"Direct Billing Backend" --> "Direct Billing Bundle UI":Sync updated products
+"Direct Billing Bundle UI" -> "Direct Billing Bundle UI":Update bundle UI <font color=red>???
+
 @enduml
 

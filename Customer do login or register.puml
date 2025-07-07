@@ -1,0 +1,26 @@
+@startuml
+title Users place order successfully
+actor Customer
+participant FE #abcaff
+participant "Direct Billing Bundle UI" #c3ffcd
+participant "2019" #abcaff
+participant "Commerce Insurance" #abcaff
+participant "Commerce Customer" #abcaff
+participant "Direct Billing Backend" #c3ffcd
+database "Mysql" #fdda14
+
+autonumber
+Customer -> FE:Customer clicks the "Proceed to checkout" button
+FE -> 2019:GET /payment/cart-check
+2019 -> FE:Redirect to /checkout
+alt If the customer login existing account
+
+    alt If the customer chooses to merge the shopping cart
+
+    end
+
+end
+
+
+@enduml
+

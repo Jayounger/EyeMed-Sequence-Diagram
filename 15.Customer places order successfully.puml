@@ -22,7 +22,7 @@ FE -> 2019:GET /payment/check
 2019 --> 2019:Process payment
 2019 -> "Direct Billing Backend":POST /carts/{{cart-id}}/update-status ORDER_PLACE_PLACED
 "Direct Billing Backend" --> 2019:Response
-FE -> "Direct Billing Bundle UI":Trigger onOrderComplete event
+FE -> "Direct Billing Bundle UI":Trigger onOrderComplete event <font color=red>???
 2019 -> FE:Redirect to thankyou page
 
 @enduml

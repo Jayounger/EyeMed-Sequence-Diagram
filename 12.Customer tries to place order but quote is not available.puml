@@ -22,8 +22,7 @@ else If the returned data is not valid
     "Commerce Insurance" --> "Commerce Insurance" :Compare the returned data with the insurance details in the database
     "Commerce Insurance"  --> 2019:Response error message
 end
-    "Commerce Insurance"  --> 2019:Response error message
-    "Commerce Insurance"  --> FE:Response error message
+    "2019"  --> FE:Response error message
 
     FE -> FE:Alert error message
 

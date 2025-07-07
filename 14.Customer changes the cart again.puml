@@ -1,5 +1,5 @@
 @startuml
-title User clicks Apply insurance
+title Users update the cart
 actor Customer
 participant FE #abcaff
 participant "Direct Billing Bundle UI" #c3ffcd
@@ -15,20 +15,22 @@ autonumber
 Customer -> FE:Update the products of cart
 FE -> 2019:POST /cart
 FE -> "Direct Billing Bundle UI":Trigger onCartBundleChange event
+
 2019 -> 2019:Update the cart
 2019 -> "Commerce Insurance":POST /carts/{cart-id}/products
-"Direct Billing Backend" --> "Commerce Insurance":Response the new insurance details
-note right
-<font color=red>CLAIM_CANCELLED
-<font color=green>QUOTE_APPLIED
-end note
-"Commerce Insurance" -> "Mysql":Insert the insurance details
-"Mysql" --> "Commerce Insurance":Response
+"Commerce Insurance" -> "Direct Billing Backend":POST /carts/{cart-id}/products
+alt If the insurance details has updated
+    "Direct Billing Backend" --> "Commerce Insurance":Response the new insurance details
+    "Commerce Insurance" -> "Mysql":Insert the insurance details
+    "Mysql" --> "Commerce Insurance":Response
+else
+    "Direct Billing Backend" --> "Commerce Insurance":Response {}
+end
 "Commerce Insurance" --> 2019:Response
-"2019" --> FE:Response
-"Direct Billing Backend" --> "Direct Billing Bundle UI":Response updated products
+"2019" -> FE:Response
+"Direct Billing Backend" --> "Direct Billing Bundle UI":Sync updated products
 "Direct Billing Bundle UI" -> FE:Hook function refreshCart
-FE -> FE:Refresh the product list and cart total price on the page. Refresh the quick cart.
+FE -> FE:Update the discount price on cart page and quick cart
 
 @enduml
 

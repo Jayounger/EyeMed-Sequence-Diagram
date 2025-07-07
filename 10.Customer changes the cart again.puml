@@ -14,6 +14,9 @@ database "Mysql" #fdda14
 autonumber
 Customer -> FE:Update the products of cart
 FE -> 2019:POST /cart
+'note right
+'Step 2 and step 3 at the same time
+'end note
 FE -> "Direct Billing Bundle UI":Trigger onCartBundleChange event
 2019 -> 2019:Update the cart
 2019 -> "Commerce Insurance":POST /carts/{cart-id}/products

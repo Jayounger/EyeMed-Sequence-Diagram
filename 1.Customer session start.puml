@@ -18,14 +18,42 @@ FE -> "Direct Billing Bundle UI":Load & initialize UI bundle
 FE -> "Webservice":POST /insurance/session-start
 "Webservice" -> "Commerce Insurance":POST /session-start
 "Commerce Insurance" -> "Redis":Get the session status
-
+"Redis" --> "Commerce Insurance":Response
 alt If the session cache is not empty
-    "Commerce Insurance" -> "Mysql":Insert a visit log
+    "Commerce Insurance" -> "Mysql":Refresh the expire time of session
     "Commerce Insurance" --> "Webservice":Response
     "Webservice" --> FE:Response
 else If the session cache is empty
-    "Commerce Insurance" -> "Mysql":Get the last session log
-    alt If the session log is empty
+
+'    Start verify whether the previous account has ended the session
+    alt If current customer is logged in
+        "Commerce Insurance" -> "Mysql":Get the guest customer's active session
+        "Mysql" --> "Commerce Insurance":Response
+        alt If the session is not empty
+            "Commerce Insurance" -> "Direct Billing Backend":POST /commerce-session/end
+            "Direct Billing Backend" --> "Commerce Insurance":Response
+            "Commerce Insurance" -> "Mysql":Update the guest customer's active session to inactive
+            "Mysql" --> "Commerce Insurance":Response
+            "Commerce Insurance" -> "Redis":Delete the guest customer's active session
+            "Redis" --> "Commerce Insurance":Response
+        end
+    else If current customer is not logged in
+        "Commerce Insurance" -> "Mysql":Get the previously logged-in customer's active session
+        "Mysql" --> "Commerce Insurance":Response
+        alt If the session is not empty
+            "Commerce Insurance" -> "Direct Billing Backend":POST /commerce-session/end
+            "Direct Billing Backend" --> "Commerce Insurance":Response
+            "Commerce Insurance" -> "Mysql":Update the logged-in customer's active session to inactive
+            "Mysql" --> "Commerce Insurance":Response
+            "Commerce Insurance" -> "Redis":Delete the logged-in customer's active session
+            "Redis" --> "Commerce Insurance":Response
+        end
+    end
+'    End verify whether the previous account has ended the session
+
+    "Commerce Insurance" -> "Mysql":Get the current customer's <font color=red>active session
+    "Mysql" --> "Commerce Insurance":Response
+    alt If the session is empty
         alt "If it is a logged-in customer"
            "Commerce Insurance" -> "Commerce Customer":GET /users/{user-id}
            "Commerce Customer" --> "Commerce Insurance":response
@@ -39,14 +67,14 @@ else If the session cache is empty
         alt "If the response include insurance details"
             "Commerce Insurance" -> "Mysql":Insert the insurance details
         end
-        note right
-            This is the customer's first visit to the website
-        end note
-        "Commerce Insurance" -> "Mysql":Insert session log
+        "Commerce Insurance" -> "Mysql":Insert a new session
         "Mysql" --> "Commerce Insurance":Response
         "Commerce Insurance" -> "Redis":Set session status
-    else If the session log is not empty
-        alt If the last session log has ended
+        "Redis" --> "Commerce Insurance":Response
+    else If the session is not empty
+        alt If the session is expired
+            "Commerce Insurance" -> "Direct Billing Backend":POST /commerce-session/end
+            "Direct Billing Backend" --> "Commerce Insurance":Response
             alt "If it is a logged-in customer"
                "Commerce Insurance" -> "Commerce Customer":GET /users/{user-id}
                "Commerce Customer" --> "Commerce Insurance":response
@@ -60,32 +88,15 @@ else If the session cache is empty
             alt "If the response include insurance details"
                 "Commerce Insurance" -> "Mysql":Insert the insurance details
             end
-            "Commerce Insurance" -> "Mysql":Insert session log
+            "Commerce Insurance" -> "Mysql":Insert a new session
             "Mysql" --> "Commerce Insurance":Response
             "Commerce Insurance" -> "Redis":Set session status
-        else If the last session log has not ended
-            alt If the last session is expired
-                "Commerce Insurance" -> "Direct Billing Backend":POST /commerce-session/end
-                "Direct Billing Backend" --> "Commerce Insurance":Response
-                alt "If it is a logged-in customer"
-                   "Commerce Insurance" -> "Commerce Customer":GET /users/{user-id}
-                   "Commerce Customer" --> "Commerce Insurance":response
-                end
-                alt "If the cart is not empty"
-                   "Commerce Insurance" -> 2019:POST /cart
-                   2019 --> "Commerce Insurance":response
-                end
-                "Commerce Insurance" -> "Direct Billing Backend":POST /commerce-session/start
-                "Direct Billing Backend" --> "Commerce Insurance":Response
-                alt "If the response include insurance details"
-                    "Commerce Insurance" -> "Mysql":Insert the insurance details
-                end
-                "Commerce Insurance" -> "Mysql":Insert session log
-                "Mysql" --> "Commerce Insurance":Response
-                "Commerce Insurance" -> "Redis":Set session status
-            else If the last session is not expired
-                "Commerce Insurance" -> "Commerce Insurance":<font color=red>????
-            end
+            "Redis" --> "Commerce Insurance":Response
+        else If the session is not expired
+            "Commerce Insurance" -> "Mysql":Refresh the expire time of session
+            "Mysql" --> "Commerce Insurance":Response
+            "Commerce Insurance" -> "Redis":Set session status
+            "Redis" --> "Commerce Insurance":Response
         end
     end
     "Commerce Insurance" --> "Webservice":Response

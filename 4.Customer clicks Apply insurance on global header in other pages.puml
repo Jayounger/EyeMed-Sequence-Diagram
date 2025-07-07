@@ -52,6 +52,8 @@ alt If quote has applied
     FE -> FE:Update the discount price on quick cart
 else If quote has not applied
     "Direct Billing Backend" --> "Direct Billing Bundle UI":Insurance toggle status is synced
+    "Direct Billing Bundle UI" -> FE:Hook function refreshCart <font color=red>???
+    FE -> FE:Update the discount price on quick cart <font color=red>???
 end
 @enduml
 

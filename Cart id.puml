@@ -1,0 +1,62 @@
+@startuml
+title Cart id generation logic
+actor Customer
+participant FE #abcaff
+participant "2019" #abcaff
+database "Mysql" #fdda14
+database "Cookie" #yellow
+
+autonumber
+Customer -> FE:Customer add product to cart
+FE -> 2019:GET /payment/buy-now
+2019 -> 2019:Add product to cart
+2019 -> "Cookie":Get the guest customer's id from cookie
+"Cookie" --> 2019:Response
+alt If the cart id is empty
+    2019 -> "Mysql":Get the guest customer's cart id
+    "Mysql" --> 2019:Response
+    alt If the cart id is not existing
+        2019 -> "Mysql":Insert cart id
+        "Mysql" --> 2019:Response
+        2019 -> "Cookie":Save cart id to cookie
+        "Cookie" --> 2019:Response
+    else If the cart id is existing
+        2019 -> "Cookie":Save cart id to cookie
+        "Cookie" --> 2019:Response
+    end
+end
+2019 --> FE:Redirect to the cart page
+FE --> Customer:Response
+Customer -> FE:Customer clicks the "Proceed to checkout" button
+FE -> 2019:GET /payment/cart-check
+2019 --> FE:Redirect to the checkout page
+FE --> Customer:Response
+Customer -> FE:Customer login or register
+FE -> 2019: Login or Register
+2019 -> "Cookie":Get the login customer's id from cookie
+"Cookie" --> 2019:Response
+alt If the cart id is empty
+    2019 -> "Mysql":Get the login customer's cart id
+    "Mysql" --> 2019:Response
+    alt If the cart id is not existing
+        2019 -> "Mysql":Insert cart id
+        "Mysql" --> 2019:Response
+        2019 -> "Cookie":Save cart id to cookie
+        "Cookie" --> 2019:Response
+    else If the cart id is existing
+        2019 -> "Cookie":Save cart id to cookie
+        "Cookie" --> 2019:Response
+    end
+end
+"2019" -> FE:Redirect to the checkout page
+
+Customer -> FE:Customer clicks the "Confirm and Pay" button
+FE -> 2019:GET /payment/check
+2019 -> 2019:Place order
+2019 -> "Mysql":Remove guest and login customer's cart id
+Mysql --> 2019:Response
+2019 -> "Cookie":Remove guest and login customer's cart id
+"Cookie" --> 2019:Response
+2019 --> FE:Redirect to thankyou page
+@enduml
+
