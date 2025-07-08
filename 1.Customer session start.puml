@@ -17,12 +17,13 @@ FE -> "Direct Billing Bundle UI":Load & initialize UI bundle
 "Direct Billing Bundle UI" --> FE:Response
 FE -> "Webservice":POST /insurance/session-start
 "Webservice" -> "Commerce Insurance":POST /session-start
+"Commerce Insurance" -> "Commerce Insurance":Parse the token to check whether the customer is logged in
 "Commerce Insurance" -> "Redis":Get the session status
 "Redis" --> "Commerce Insurance":Response
 alt If the session cache is not empty
     "Commerce Insurance" -> "Mysql":Refresh the expire time of session
-    "Commerce Insurance" --> "Webservice":Response
-    "Webservice" --> FE:Response
+    "Commerce Insurance" --> "Webservice":Response session start request body
+    "Webservice" --> FE:Response session start request body
 else If the session cache is empty
 
 '    Start verify whether the previous account has ended the session
@@ -99,9 +100,9 @@ else If the session cache is empty
             "Redis" --> "Commerce Insurance":Response
         end
     end
-    "Commerce Insurance" --> "Webservice":Response
+    "Commerce Insurance" --> "Webservice":Response session start request body
 
-     "Webservice" --> FE:Response
+     "Webservice" --> FE:Response session start request body
 end
 
 "Direct Billing Bundle UI" -> FE: Hook function getCustomer

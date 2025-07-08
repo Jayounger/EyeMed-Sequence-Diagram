@@ -1,6 +1,6 @@
-1. session start加一个解token, 拿哪一个Redis id
-    session start not ready   3秒后刷新页面,重新sesssion start
-    61.session start 返回login/guest 去start的info，这样这里可以区分开怎么去getCustomer
+1. session start加一个解token, 拿哪一个Redis id  完成
+    session start not ready   3秒后刷新页面,重新sesssion start  答：可以在redis中打一个标记，表示正在开启会话，开启成功后将该标记删除。若该标记存在，则该用户不能开启第二次会话
+    61.session start 返回login/guest 去start的info，这样这里可以区分开怎么去getCustomer 完成
 
 2. 4 可以被session start返回的数据取代
   10. something went wrong(都不动，过期了)提示用户刷新页面
