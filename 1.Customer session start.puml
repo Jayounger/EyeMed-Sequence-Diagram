@@ -13,8 +13,6 @@ database "Mysql" #fdda14
 
 autonumber
 Customer -> FE:Customer opens our website
-FE -> "Direct Billing Bundle UI":Load & initialize UI bundle
-"Direct Billing Bundle UI" --> FE:Response
 FE -> "Webservice":POST /insurance/session-start
 "Webservice" -> "Commerce Insurance":POST /session-start
 "Commerce Insurance" -> "Commerce Insurance":Parse the token to check whether the customer is logged in
@@ -104,17 +102,10 @@ else If the session cache is empty
 
      "Webservice" --> FE:Response session start request body
 end
-
+FE -> "Direct Billing Bundle UI":Load & initialize UI bundle
+"Direct Billing Bundle UI" --> FE:Response
 "Direct Billing Bundle UI" -> FE: Hook function getCustomer
-alt If it is a guest customer
-    FE --> "Direct Billing Bundle UI":Response guest customer info
-else If it is a login customer
-    FE -> "Webservice":GET /users/{user-id}
-    "Webservice" -> "Commerce Customer":GET /users/{user-id}
-    "Commerce Customer" --> "Webservice":Response
-    "Webservice" --> FE:Response
-    FE --> "Direct Billing Bundle UI":Response login customer info
-end
+FE --> "Direct Billing Bundle UI":Response customer info from session start request body
 
 @enduml
 
