@@ -1,11 +1,13 @@
-1. session start加一个解token, 拿哪一个Redis id  完成
+07-07 from Mavllen
+1. session start加一个解token, 拿哪一个Redis id  --------- 完成
     session start not ready   3秒后刷新页面,重新sesssion start  答：可以在redis中打一个标记，表示正在开启会话，开启成功后将该标记删除。若该标记存在，则该用户不能开启第二次会话
-    61.session start 返回login/guest 去start的info，这样这里可以区分开怎么去getCustomer 完成
+    61.session start 返回login/guest 去start的info，这样这里可以区分开怎么去getCustomer ------------ 完成
 
-2. 4 可以被session start返回的数据取代
+
+2. 4 可以被session start返回的数据取代   ----------- 完成
   10. something went wrong(都不动，过期了)提示用户刷新页面
-  29. 30. 无脑刷
-4. 29.30 无脑刷
+  29. 30. 无脑刷 ------------ 完成
+4. 29.30 无脑刷 ---------- 完成
 6. 2.3是否有先后关系？ask Kevin
    response {} 没有保险变更？还是状态变更？
    refreshCart: 给后端applied insurance status状态决定insurance discount是否展示??
@@ -13,6 +15,11 @@
 9. 2.3.4.5.6. 接口异常，quote_removed status 状态彼此不同步？
 
 cart id: cartId + products，id不为空，products为空，怎么传？ 答：有id传ID，若有id，products为空，传id不传products值
-  
 
+  
+07-09 from Daniel
+1. panel loading 10s阈值，问下他们正式环境这个接口会多久
+2. ssr--- session start, 熔断后js都不要加载
+3. check www ajaxAuto and added api try catch 
+4. 熔断后确保disable掉 render all entry
 
