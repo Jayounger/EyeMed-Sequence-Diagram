@@ -1,0 +1,12 @@
+@startuml
+title Cart id generation logic
+actor Customer
+participant FE #abcaff
+participant "2019" #abcaff
+database "Mysql" #fdda14
+database "Cookie" #yellow
+
+autonumber
+
+@enduml
+

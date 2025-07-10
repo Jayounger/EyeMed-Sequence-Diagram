@@ -1,0 +1,20 @@
+@startuml
+title Circuit breaker logic
+participant "2019/Webservice" #abcaff
+participant "Commerce Insurance" #abcaff
+database "Redis" #fdda14
+
+autonumber
+"2019/Webservice" -> "Commerce Insurance":Call API
+"Commerce Insurance" -> "Redis":Get the circuit breaker status
+"Redis" --> "Commerce Insurance":Response
+alt Circuit breaker is open
+    "Commerce Insurance" --> "2019/Webservice":Response circuit breaker error message
+else
+    "Commerce Insurance" -> "Commerce Insurance":Process the business logic
+    "Commerce Insurance" --> "2019/Webservice":Response
+end
+
+
+@enduml
+

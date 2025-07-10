@@ -1,0 +1,24 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+title Auth token refresh cron job
+start
+:Get the cronjob status from redis;
+if (Cron job is running?) then (yes)
+else (false)
+:Set cron job status to 1 in redis;
+repeat
+:Request Direct Billing API to get the auth token;
+if (API call successful?) then (yes)
+break
+else (no)
+:Log error message;
+:Sleep for 2 seconds;
+endif
+repeat while (Failed to obtain the token and the number of requests is less than 10?)
+:Update the auth token in redis;
+:Remove cronjob status in redis;
+endif
+
+stop
+
+@enduml

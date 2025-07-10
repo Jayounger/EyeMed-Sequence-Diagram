@@ -1,0 +1,26 @@
+@startuml
+
+participant FE #abcaff
+participant "Direct Billing Bundle UI" #c3ffcd
+participant "Webservice" #abcaff
+participant "Commerce Insurance" #abcaff
+database "Redis" #yellow
+
+autonumber
+FE -> "Webservice":POST /insurance/session-start
+"Webservice" -> "Commerce Insurance":POST /session-start
+"Commerce Insurance" -> "Redis":Get the circuit breaker status
+"Redis" --> "Commerce Insurance":Response
+alt Circuit breaker is open
+    "Commerce Insurance" --> "Webservice":Response circuit breaker error message
+    Webservice --> FE:Response circuit breaker error message
+    FE -> FE:Don't load EyeMed JS
+else
+     "Commerce Insurance" -> "Commerce Insurance":Process the business logic
+     "Commerce Insurance" --> "Webservice":Response
+     Webservice --> FE:Response
+end
+
+
+@enduml
+

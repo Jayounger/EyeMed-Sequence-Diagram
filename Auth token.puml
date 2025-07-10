@@ -1,0 +1,24 @@
+@startuml
+title Auth token logic
+participant "Commerce Insurance" #abcaff
+participant "Direct Billing Backend" #c3ffcd
+database "Redis" #yellow
+
+autonumber
+"Commerce Insurance" -> "Redis":Get the auth token
+"Redis" --> "Commerce Insurance":Response
+alt if the auth token is empty
+    "Commerce Insurance" -> "Commerce Insurance":Log error message
+else
+    "Commerce Insurance" -> "Direct Billing Backend":Request API with token
+    "Direct Billing Backend" --> "Commerce Insurance":Response
+    alt if the response status code is 401(The incoming token has expired)
+        "Commerce Insurance" -> "Commerce Insurance":Log error message
+    end
+end
+
+
+
+
+@enduml
+

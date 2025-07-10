@@ -43,3 +43,18 @@ P
  1.Customer session start V2.puml,2\b\2b80821c314982da4d83fb7f9bc1b312d7ef167d
 ?
 review_tips.txt,e\6\e6300742aeb05561b983c7c69bf4ea01340eacb6
+:
+
+Class.puml,2\a\2af96e502c47777ca844b27888c89327846fc036
+;
+Class2.puml,b\b\bbc0534f7e972a9765365d6da714be36befc5fd5
+B
+Guest user id.puml,b\d\bddacc42d864815da96a4169a9bad92e92bf377d
+?
+Auth token.puml,5\2\5299dbbd1ff356d1bbedaef1b4756ca079071590
+P
+ Auth token refresh cron job.puml,9\d\9d89fe5fd8ba10e46171c7da81ac622c7b71c3a9
+D
+Circuit breaker.puml,0\3\03d205168d3a4a83a21f03f45daf161d840fbfa4
+R
+"Circuit breaker session start.puml,f\1\f1bd0aa00fb13a2dc0a0c18f66aacba84a8fd2de

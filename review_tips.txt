@@ -12,7 +12,7 @@
    新开tab对toggle关闭有没有影响
 9. 2.3.4.5.6. 接口异常，quote_removed status 状态彼此不同步？
 
-cart id: cartId + products，id不为空，products为空，怎么传？
+cart id: cartId + products，id不为空，products为空，怎么传？ 答：有id传ID，若有id，products为空，传id不传products值
   
 
 

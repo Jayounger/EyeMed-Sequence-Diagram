@@ -4,7 +4,7 @@
 start
 :Get the cronjob status from redis;
 if (Cron job is running?) then (yes)
-else (false)
+else (no)
 :Set cron job status to 1 in redis;
 repeat
 :Find sessions with status=1 and expire_time < now (limit 100);

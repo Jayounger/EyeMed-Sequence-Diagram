@@ -1,119 +1,12 @@
 {
-  "cartId": "cart-1103472778",
-  "status": "QUOTE_APPLIED",
-  "customerNumber": "1103472778",
-  "insuranceDetails": {
-    "payee": "PROVIDER_ORGANIZATION",
-    "cartId": "cart-1103472778",
-    "customerAmount": {
-      "amount": 180.9,
-      "currency": "USD"
-    },
-    "customerNumber": "1103472778",
-    "claimedProducts": [
-      {
-        "id": "20034-0-77aa921a",
-        "name": "Vinyl",
-        "quantity": 1,
-        "cartProducts": [
-          {
-            "name": "Vinyl",
-            "quantity": 1,
-            "ecommerceId": "20034",
-            "productTypes": [
-              "FRAME"
-            ],
-            "customerAmount": {
-              "amount": 0,
-              "currency": "USD"
-            },
-            "confirmedAmount": {
-              "amount": 59,
-              "currency": "USD"
-            },
-            "requestedAmount": {
-              "amount": 59,
-              "currency": "USD"
-            },
-            "insuranceCopayAmount": {
-              "amount": 0,
-              "currency": "USD"
-            },
-            "insuranceCoveredAmount": {
-              "amount": 32.45,
-              "currency": "USD"
-            },
-            "insurancePlanDiscountAmount": {
-              "amount": 26.55,
-              "currency": "USD"
-            }
-          },
-          {
-            "name": "single-vision Gray 1.59",
-            "quantity": 1,
-            "ecommerceId": "549",
-            "productTypes": [
-              "LENS_PACKAGE"
-            ],
-            "requestedAmount": {
-              "amount": 180.9,
-              "currency": "USD"
-            }
-          }
-        ],
-        "customerAmount": {
-          "amount": 0,
-          "currency": "USD"
-        },
-        "confirmedAmount": {
-          "amount": 59,
-          "currency": "USD"
-        },
-        "requestedAmount": {
-          "amount": 239.9,
-          "currency": "USD"
-        },
-        "insuranceCopayAmount": {
-          "amount": 0,
-          "currency": "USD"
-        },
-        "insuranceCoveredAmount": {
-          "amount": 32.45,
-          "currency": "USD"
-        },
-        "insurancePlanDiscountAmount": {
-          "amount": 26.55,
-          "currency": "USD"
-        }
-      }
-    ],
-    "confirmedAmount": {
-      "amount": 59,
-      "currency": "USD"
-    },
-    "primaryCoverage": {
-      "insurer": {
-        "id": "dbi-ebd-us-eyemed",
-        "name": "EyeMed",
-        "insuranceProviderId": "dbi-ebd-us-ria",
-        "insuranceProviderName": "RIA"
-      }
-    },
-    "requestedAmount": {
-      "amount": 239.9,
-      "currency": "USD"
-    },
-    "insuranceCopayAmount": {
-      "amount": 0,
-      "currency": "USD"
-    },
-    "insuranceCoveredAmount": {
-      "amount": 32.45,
-      "currency": "USD"
-    },
-    "insurancePlanDiscountAmount": {
-      "amount": 26.55,
-      "currency": "USD"
+  "status": "SUCCESS",
+  "message": "success",
+  "data": {
+    "customer_info": {
+      "customerNumber" :"qwertyuiopas",
+      "sessionType": "GUEST",
+      "cartId": "guest_1"
     }
+
   }
 }

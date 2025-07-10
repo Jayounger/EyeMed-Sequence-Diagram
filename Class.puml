@@ -1,0 +1,39 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface SessionInterface
+interface CartInterface
+interface OrderInterface
+interface QuoteDetailInterface
+
+class Session
+class Cart
+class Order
+class QuoteDetail
+
+SessionInterface : recordSession()
+SessionInterface : startSession()
+SessionInterface : endSession()
+
+CartInterface : formatCartProducts()
+CartInterface : pushCartProducts()
+CartInterface : updateCartStatus()
+
+QuoteDetailInterface : setQuoteDetails()
+QuoteDetailInterface : getQuoteDetails()
+
+OrderInterface : updateOrderStatus()
+
+
+Session ..|> SessionInterface
+Cart ..|> CartInterface
+Order ..|> OrderInterface
+QuoteDetail ..|> QuoteDetailInterface
+
+
+
+
+
+
+
+@enduml
