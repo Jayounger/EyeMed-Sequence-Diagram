@@ -23,3 +23,6 @@ cart id: cartId + products，id不为空，products为空，怎么传？ 答：�
 3. check www ajaxAuto and added api try catch 
 4. 熔断后确保disable掉 render all entry
 
+07-11 from Daniel
+1. need init widget flow
+2. 不要单独把cookie作为一列,另外FE改成Nextjs,圆柱一般表示数据库
