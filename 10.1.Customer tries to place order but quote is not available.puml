@@ -1,0 +1,30 @@
+@startuml
+title Customer tries to place order but quote is not available
+actor Customer
+participant FE #abcaff
+participant "2019" #abcaff
+participant "Commerce Insurance" #abcaff
+participant "Direct Billing Backend" #c3ffcd
+database "Mysql" #fdda14
+
+autonumber
+Customer -> FE:Click the "Confirm and Pay"
+FE -> 2019:GET /payment/check
+2019 -> "Commerce Insurance":POST /carts/update-status ORDER_PLACE_STARTED
+"Commerce Insurance" -> "Direct Billing Backend":POST /carts/{{cart-id}}/update-status ORDER_PLACE_STARTED
+"Direct Billing Backend" --> "Commerce Insurance":Response {} or not valid insurance details
+
+alt If the returned data is empty
+    "Commerce Insurance" --> 2019:Response error message
+else If the returned data is not valid
+    "Commerce Insurance" -> "Mysql":Get the insurance details
+    "Mysql" --> "Commerce Insurance":Response
+    "Commerce Insurance" --> "Commerce Insurance" :Compare the returned data with the insurance details in the database
+    "Commerce Insurance"  --> 2019:Response error message
+end
+    "2019"  --> FE:Response error message
+
+    FE -> FE:Alert error message
+
+@enduml
+

@@ -7,8 +7,8 @@ participant "Commerce Insurance" #abcaff
 database "Redis" #yellow
 
 autonumber
-FE -> "Webservice":POST /insurance/session-start
-"Webservice" -> "Commerce Insurance":POST /session-start
+FE -> "Webservice":POST /insurance/sessions/start
+"Webservice" -> "Commerce Insurance":POST /sessions/start
 "Commerce Insurance" -> "Redis":Get the circuit breaker status
 "Redis" --> "Commerce Insurance":Response
 alt Circuit breaker is open
@@ -19,6 +19,8 @@ else
      "Commerce Insurance" -> "Commerce Insurance":Process the business logic
      "Commerce Insurance" --> "Webservice":Response
      Webservice --> FE:Response
+     FE -> "Direct Billing Bundle UI":Load EyeMed JS
+     "Direct Billing Bundle UI" --> FE:Response
 end
 
 

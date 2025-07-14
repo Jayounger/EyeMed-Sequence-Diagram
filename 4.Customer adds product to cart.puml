@@ -1,0 +1,35 @@
+@startuml
+title Customer adds product to cart
+actor Customer
+participant FE #abcaff
+participant "Direct Billing Bundle UI" #c3ffcd
+participant "2019" #abcaff
+participant "Webservice" #abcaff
+participant "Commerce Insurance" #abcaff
+participant "Commerce Customer" #abcaff
+participant "Direct Billing Backend" #c3ffcd
+database "Redis" #yellow
+database "Mysql" #fdda14
+
+autonumber
+Customer -> FE:Add products to cart
+FE -> 2019:POST /payment/buy-now
+FE -> "Direct Billing Bundle UI":Trigger onCartBundleChange event
+2019 -> 2019:Update the cart
+2019 -> "Commerce Insurance":POST /carts/sync-products
+"Commerce Insurance" -> "Direct Billing Backend":POST /carts/{cart-id}/products
+alt If insurance details has updated
+    "Direct Billing Backend" --> "Commerce Insurance":Response new insurance details
+    "Commerce Insurance" -> "Mysql":Insert the insurance details
+    "Mysql" --> "Commerce Insurance":Response
+else 
+    "Direct Billing Backend" --> "Commerce Insurance":Response {}
+end
+"Commerce Insurance" --> 2019:Response
+"2019" -> FE:Redirect to cart page
+FE -> FE:Show cart page
+"Direct Billing Backend" --> "Direct Billing Bundle UI":Sync updated products
+"Direct Billing Bundle UI" -> "Direct Billing Bundle UI":Update bundle UI <font color=red>???
+
+@enduml
+

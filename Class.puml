@@ -1,36 +1,68 @@
 @startuml
 'https://plantuml.com/class-diagram
 
+
+together {
 interface SessionInterface
 interface CartInterface
 interface OrderInterface
 interface QuoteDetailInterface
+}
+together {
+class SessionService
+class CartService
+class OrderService
+class QuoteDetailService
+}
 
-class Session
-class Cart
-class Order
-class QuoteDetail
+together {
+class DirectBilling
+class Fake
+}
 
-SessionInterface : recordSession()
-SessionInterface : startSession()
-SessionInterface : endSession()
-
-CartInterface : formatCartProducts()
-CartInterface : pushCartProducts()
-CartInterface : updateCartStatus()
-
-QuoteDetailInterface : setQuoteDetails()
-QuoteDetailInterface : getQuoteDetails()
-
-OrderInterface : updateOrderStatus()
+abstract class AbstractInsuranceService
+interface StrategyInterface
+interface DirectBillingInsuranceInterface
 
 
-Session ..|> SessionInterface
-Cart ..|> CartInterface
-Order ..|> OrderInterface
-QuoteDetail ..|> QuoteDetailInterface
+'继承
+DirectBillingInsuranceInterface --|> SessionInterface
+DirectBillingInsuranceInterface --|> CartInterface
+DirectBillingInsuranceInterface --|> OrderInterface
+DirectBillingInsuranceInterface --|> QuoteDetailInterface
+
+DirectBilling ..|> DirectBillingInsuranceInterface
+Fake ..|> DirectBillingInsuranceInterface
 
 
+'实现
+SessionService --> SessionInterface
+CartService --> CartInterface
+OrderService --> OrderInterface
+QuoteDetailService --> QuoteDetailInterface
+
+AbstractInsuranceService --> StrategyInterface
+AbstractInsuranceService --> DirectBillingInsuranceInterface
+
+SessionService --|> AbstractInsuranceService
+CartService --|> AbstractInsuranceService
+OrderService --|> AbstractInsuranceService
+QuoteDetailService --|> AbstractInsuranceService
+
+'方法定义
+SessionInterface : start()
+SessionInterface : end()
+
+CartInterface : formatProducts()
+CartInterface : syncProducts()
+CartInterface : syncStatus()
+
+QuoteDetailInterface : syncDetails()
+QuoteDetailInterface : getDetails()
+
+OrderInterface : syncOrderStatus()
+
+AbstractInsuranceService : getStrategy()
 
 
 

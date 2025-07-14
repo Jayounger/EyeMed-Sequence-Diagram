@@ -1,0 +1,59 @@
+@startuml
+title Customer clicks Apply insurance on global header in other pages
+actor Customer
+participant FE #abcaff
+participant "Direct Billing Bundle UI" #c3ffcd
+participant "Webservice" #abcaff
+participant "Commerce Insurance" #abcaff
+participant "Commerce Customer" #abcaff
+participant "2019" #abcaff
+participant "Direct Billing Backend" #c3ffcd
+database "Redis" #yellow
+database "Mysql" #fdda14
+
+autonumber
+Customer -> "Direct Billing Bundle UI":User fills in the insurance account and clicks the "Apply insurance"
+"Direct Billing Bundle UI" -> FE:Hook function getCustomer
+
+alt If it is a guest user
+    FE --> "Direct Billing Bundle UI":Response guest user info
+else If it is a login user
+    FE -> "Webservice":GET /users/{user-id}
+    "Webservice" -> "Commerce Customer":GET /users/{user-id}
+    "Commerce Customer" --> "Webservice":Response
+    "Webservice" --> FE:Response
+    FE --> "Direct Billing Bundle UI":Response login user info
+end
+
+"Direct Billing Bundle UI" -> FE:Hook function getCartItemDetails
+alt If cartId is empty
+    FE --> "Direct Billing Bundle UI":Response {}
+else If cartId is not empty
+    FE -> "Webservice":GET /insurance/product-bundle
+    "Webservice" -> "Commerce Insurance":GET /product-bundle
+    "Commerce Insurance" -> 2019:GET /cart
+    2019 --> "Commerce Insurance":Response
+    "Commerce Insurance" --> "Webservice":Response
+    "Webservice" --> FE:Response
+    FE --> "Direct Billing Bundle UI":Response product bundle
+end
+
+"Direct Billing Bundle UI" -> "Direct Billing Backend": PUT /claim-records
+
+alt If quote has applied
+    "Direct Billing Backend" -> "Webservice":POST /update-insurance-details <font color=#27ad9a>QUOTE_APPLIED
+    "Webservice" -> "Commerce Insurance":POST /quote/update-details
+    "Commerce Insurance" -> "Mysql":Insert insurance details
+    "Mysql" --> "Commerce Insurance":Response
+    "Commerce Insurance" --> "Webservice":Response
+    "Webservice" --> "Direct Billing Backend":Response
+    "Direct Billing Backend" --> "Direct Billing Bundle UI":Insurance toggle status is synced
+    "Direct Billing Bundle UI" -> FE:Hook function refreshCart
+    FE -> FE:Update the discount price on quick cart
+else If quote has not applied
+    "Direct Billing Backend" --> "Direct Billing Bundle UI":Insurance toggle status is synced
+    "Direct Billing Bundle UI" -> FE:Hook function refreshCart <font color=red>???
+    FE -> FE:Update the discount price on quick cart <font color=red>???
+end
+@enduml
+

@@ -1,0 +1,28 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+:Get the cronjob status from redis;
+if (Cron job is running?) then (yes)
+else (no)
+:Set cron job status to 1 in redis;
+repeat
+:Get 100 order numbers from redis queue;
+    :Concurrent processing order number;
+    :Check if the order number has already processed;
+    if (order number has already processed?) then (no)
+        :Call cart status update API of Direct Billing;
+        if (API call successful?) then (yes)
+            :Update order status to 1;
+        else (no)
+            :Log error message;
+        endif
+    else (yes)
+    endif
+repeat while (more sessions?)
+:Remove cronjob status in redis;
+endif
+
+stop
+
+@enduml

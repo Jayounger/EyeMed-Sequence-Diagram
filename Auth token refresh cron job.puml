@@ -14,7 +14,7 @@ else (no)
 :Log error message;
 :Sleep for 2 seconds;
 endif
-repeat while (Failed to obtain the token and the number of requests is less than 10?)
+repeat while (Failed to obtain the token and the number of requests is less than 5?)
 :Update the auth token in redis;
 :Remove cronjob status in redis;
 endif

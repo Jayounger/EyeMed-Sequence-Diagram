@@ -1,13 +1,23 @@
 @startuml
-'https://plantuml.com/class-diagram
+hide circle
+skinparam linetype ortho
+left to right direction
 
-abstract class InsurancePayTemplate
-InsurancePayTemplate :
+entity "t_insurance_details" as t_insurance_details {
+  * id : INT <<PK>>
+  --
+  cart_id : VARCHAR
+  user_id : VARCHAR
+  status : VARCHAR
+}
 
+entity "t_insurance_claimed_product" as t_insurance_claimed_product {
+  * id : INT <<PK>>
+  --
+  user_id : INT <<FK>>
+  total_amount : DECIMAL
+  status : VARCHAR
+}
 
-
-
-
-
-
+t_insurance_details ||--o{ t_insurance_claimed_product : "has many"
 @enduml

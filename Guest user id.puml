@@ -1,12 +1,32 @@
 @startuml
-title Cart id generation logic
+title Guest user id generation logic
 actor Customer
 participant FE #abcaff
-participant "2019" #abcaff
-database "Mysql" #fdda14
+participant "www" #abcaff
 database "Cookie" #yellow
 
 autonumber
+
+Customer -> FE: Visit page
+FE -> "Cookie":Get guest user id
+"Cookie" --> "www":Response
+alt if the guest user id is empty
+    "FE" -> "FE":Generate guest user id
+    "FE" -> "Cookie":Save guest user id
+    "Cookie" --> FE:Response
+end
+
+FE -> "www":GET /system/visitor-analysis
+"www" -> "Cookie":Get guest user id
+"Cookie" --> "www":Response
+alt if the guest user id is empty
+    "www" -> "www":Generate guest user id
+    "www" -> "Cookie":Save guest user id
+    "Cookie" --> "www":Response
+    "www" --> FE:Response
+else
+    "www" --> FE:Response
+end
 
 @enduml
 
