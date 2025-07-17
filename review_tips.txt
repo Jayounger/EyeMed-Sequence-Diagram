@@ -18,11 +18,16 @@ cart id: cartId + products，id不为空，products为空，怎么传？ 答：�
 
   
 07-09 from Daniel
-1. panel loading 10s阈值，问下他们正式环境这个接口会多久
-2. ssr--- session start, 熔断后js都不要加载
-3. check www ajaxAuto and added api try catch 
-4. 熔断后确保disable掉 render all entry
+1. panel loading 10s阈值，问下他们正式环境这个接口会多久 --- 已反馈Kevin
+2. ssr--- session start, 熔断后js都不要加载 --- todo
+3. check www ajaxAuto and added api try catch --- todo
+4. 熔断后确保disable掉 render all entry --- todo
 
 07-11 from Daniel
-1. need init widget flow
-2. 不要单独把cookie作为一列,另外FE改成Nextjs,圆柱一般表示数据库
+1. need init widget flow --- done
+2. 不要单独把cookie作为一列,另外FE改成Nextjs,圆柱一般表示数据库 --- done
+3. 怎么确保健全？我们自己前后端的可靠性如何保证？
+4. “Failed to obtain…” 那一步请加上yes/no, 如果试了10次都没成功呢？
+
+
+

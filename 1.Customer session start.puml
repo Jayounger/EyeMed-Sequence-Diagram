@@ -102,8 +102,9 @@ else If the session cache is empty
 
      "Webservice" --> FE:Response customer information
 end
-FE -> "Direct Billing Bundle UI":Load & initialize UI bundle
+FE -> "Direct Billing Bundle UI":Load Bundle js
 "Direct Billing Bundle UI" --> FE:Response
+FE -> FE: Init widget
 "Direct Billing Bundle UI" -> FE: Hook function getCustomer
 FE --> "Direct Billing Bundle UI":Response customer info from session start request body
 

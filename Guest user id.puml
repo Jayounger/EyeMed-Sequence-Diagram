@@ -1,32 +1,35 @@
 @startuml
-title Guest user id generation logic
+title Guest User ID Generation Flow
+
 actor Customer
-participant FE #abcaff
+participant Nextjs #abcaff
 participant "www" #abcaff
-database "Cookie" #yellow
+participant "Cookie" as Cookie #yellow
 
 autonumber
 
-Customer -> FE: Visit page
-FE -> "Cookie":Get guest user id
-"Cookie" --> "www":Response
-alt if the guest user id is empty
-    "FE" -> "FE":Generate guest user id
-    "FE" -> "Cookie":Save guest user id
-    "Cookie" --> FE:Response
+Customer -> Nextjs: Visit page
+note right of Cookie
+  Stored in browser, accessible to both FE and BE
+end note
+Nextjs -> Cookie: Get guest user id
+Cookie --> Nextjs: Response
+alt Guest user id is **empty**
+    Nextjs -> Nextjs: Generate new guest user id
+    Nextjs -> Cookie: Save guest user id
+    Cookie --> Nextjs: Response
 end
 
-FE -> "www":GET /system/visitor-analysis
-"www" -> "Cookie":Get guest user id
-"Cookie" --> "www":Response
-alt if the guest user id is empty
-    "www" -> "www":Generate guest user id
-    "www" -> "Cookie":Save guest user id
-    "Cookie" --> "www":Response
-    "www" --> FE:Response
+Nextjs -> www: GET /system/visitor-analysis
+www -> Cookie: Get guest user id
+Cookie --> www: Response
+alt Guest user id is **empty**
+    www -> www: Generate new guest user id
+    www -> Cookie: Save guest user id
+    Cookie --> www: Response
 else
-    "www" --> FE:Response
+    www --> Nextjs: Response
 end
+
 
 @enduml
-
