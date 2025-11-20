@@ -8,16 +8,18 @@ participant "Commerce Insurance" #abcaff
 participant "Commerce Customer" #abcaff
 participant "2019" #abcaff
 participant "Direct Billing Backend" #c3ffcd
+database "DynamoDB" #yellow
 database "Redis" #yellow
 database "Mysql" #fdda14
+
 
 autonumber
 Customer -> FE:Customer opens our website
 FE -> "Webservice":POST /insurance/sessions/start
 "Webservice" -> "Commerce Insurance":POST /sessions/start
 "Commerce Insurance" -> "Commerce Insurance":Parse the JWT token to check whether the customer is logged in
-"Commerce Insurance" -> "Redis":Get the session status
-"Redis" --> "Commerce Insurance":Response
+"Commerce Insurance" -> "DynamoDB":Get the session status
+"DynamoDB" --> "Commerce Insurance":Response
 alt If the session cache is not empty
     "Commerce Insurance" -> "Mysql":Refresh the expire time of session
     "Commerce Insurance" --> "Webservice":Response customer information
@@ -33,8 +35,8 @@ else If the session cache is empty
             "Direct Billing Backend" --> "Commerce Insurance":Response
             "Commerce Insurance" -> "Mysql":Update the guest customer's active session to inactive
             "Mysql" --> "Commerce Insurance":Response
-            "Commerce Insurance" -> "Redis":Delete the guest customer's active session
-            "Redis" --> "Commerce Insurance":Response
+            "Commerce Insurance" -> "DynamoDB":Delete the guest customer's active session
+            "DynamoDB" --> "Commerce Insurance":Response
         end
     else If current customer is not logged in
         "Commerce Insurance" -> "Mysql":Get the previously logged-in customer's active session
@@ -44,8 +46,8 @@ else If the session cache is empty
             "Direct Billing Backend" --> "Commerce Insurance":Response
             "Commerce Insurance" -> "Mysql":Update the logged-in customer's active session to inactive
             "Mysql" --> "Commerce Insurance":Response
-            "Commerce Insurance" -> "Redis":Delete the logged-in customer's active session
-            "Redis" --> "Commerce Insurance":Response
+            "Commerce Insurance" -> "DynamoDB":Delete the logged-in customer's active session
+            "DynamoDB" --> "Commerce Insurance":Response
         end
     end
 '    End verify whether the previous account has ended the session
@@ -68,8 +70,8 @@ else If the session cache is empty
         end
         "Commerce Insurance" -> "Mysql":Insert a new session
         "Mysql" --> "Commerce Insurance":Response
-        "Commerce Insurance" -> "Redis":Set session status
-        "Redis" --> "Commerce Insurance":Response
+        "Commerce Insurance" -> "DynamoDB":Set session status
+        "DynamoDB" --> "Commerce Insurance":Response
     else If the session is not empty
         alt If the session is expired
             "Commerce Insurance" -> "Direct Billing Backend":POST /commerce-session/end
@@ -89,13 +91,13 @@ else If the session cache is empty
             end
             "Commerce Insurance" -> "Mysql":Insert a new session
             "Mysql" --> "Commerce Insurance":Response
-            "Commerce Insurance" -> "Redis":Set session status
-            "Redis" --> "Commerce Insurance":Response
+            "Commerce Insurance" -> "DynamoDB":Set session status
+            "DynamoDB" --> "Commerce Insurance":Response
         else If the session is not expired
             "Commerce Insurance" -> "Mysql":Refresh the expire time of session
             "Mysql" --> "Commerce Insurance":Response
-            "Commerce Insurance" -> "Redis":Set session status
-            "Redis" --> "Commerce Insurance":Response
+            "Commerce Insurance" -> "DynamoDB":Set session status
+            "DynamoDB" --> "Commerce Insurance":Response
         end
     end
     "Commerce Insurance" --> "Webservice":Response customer information

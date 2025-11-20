@@ -26,8 +26,8 @@ Customer -> "Direct Billing Bundle UI":User turns on insurance toggle
 
 '"Direct Billing Bundle UI" -> FE:hook function getCartItemDetails
 
-'FE -> "Webservice":GET /insurance/product-bundle
-'"Webservice" -> "Commerce Insurance":GET /product-bundle
+'FE -> "Webservice":GET /insurances/cart-products
+'"Webservice" -> "Commerce Insurance":GET /insurances/cart-products
 '"Commerce Insurance" -> 2019:GET /cart
 '2019 --> "Commerce Insurance":Response
 '"Commerce Insurance" --> "Webservice":Response
@@ -37,7 +37,7 @@ Customer -> "Direct Billing Bundle UI":User turns on insurance toggle
 "Direct Billing Bundle UI" -> "Direct Billing Backend": PUT /claim-records
 
 "Direct Billing Backend" -> "Webservice":POST /update-insurance-details <font color=#27ad9a>QUOTE_APPLIED
-"Webservice" -> "Commerce Insurance":POST /quote/update-details
+"Webservice" -> "Commerce Insurance":POST /insurances/cart-insurance-details
 "Commerce Insurance" -> "Mysql":Insert insurance details
 "Mysql" --> "Commerce Insurance":Response
 "Commerce Insurance" --> "Webservice":Response

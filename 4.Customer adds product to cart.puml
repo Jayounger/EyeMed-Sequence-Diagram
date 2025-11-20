@@ -16,7 +16,7 @@ Customer -> FE:Add products to cart
 FE -> 2019:POST /payment/buy-now
 FE -> "Direct Billing Bundle UI":Trigger onCartBundleChange event
 2019 -> 2019:Update the cart
-2019 -> "Commerce Insurance":POST /carts/sync-products
+2019 -> "Commerce Insurance":PUT /insurances/cart-products
 "Commerce Insurance" -> "Direct Billing Backend":POST /carts/{cart-id}/products
 alt If insurance details has updated
     "Direct Billing Backend" --> "Commerce Insurance":Response new insurance details

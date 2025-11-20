@@ -15,7 +15,7 @@ autonumber
 Customer -> "Direct Billing Bundle UI":Customer clicks "Insure Different Product" and select another product to apply insurance
 "Direct Billing Bundle UI" -> "Direct Billing Backend":POST /claim-records/{id}/select-claimable
 "Direct Billing Backend" -> "Webservice":POST /update-insurance-details
-"Webservice" -> "Commerce Insurance":POST /quote/update-details
+"Webservice" -> "Commerce Insurance":POST /insurances/cart-insurance-details
 "Commerce Insurance" -> "Mysql":Insert insurance details
 "Mysql" --> "Commerce Insurance":Response
 "Commerce Insurance" --> "Webservice":Response

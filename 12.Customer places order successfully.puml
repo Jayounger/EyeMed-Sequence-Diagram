@@ -3,6 +3,7 @@ title Customer places order successfully
 actor Customer
 participant FE #abcaff
 participant "Direct Billing Bundle UI" #c3ffcd
+participant "Cronjob www" #abcaff
 participant "2019" #abcaff
 participant "Commerce Insurance" #abcaff
 participant "Direct Billing Backend" #c3ffcd
@@ -17,13 +18,23 @@ FE -> 2019:GET /payment/check
 "Commerce Insurance" -> "Mysql":Get the insurance details
 "Mysql" --> "Commerce Insurance":Response
 "Commerce Insurance" --> "Commerce Insurance" :Compare the returned data with the insurance details in the database
-"Commerce Insurance"  --> 2019:Response insurance details
+"Commerce Insurance"  --> 2019:Response
 
 2019 --> 2019:Process payment
-2019 -> "Direct Billing Backend":POST /carts/{{cart-id}}/update-status ORDER_PLACE_PLACED
-"Direct Billing Backend" --> 2019:Response
-2019 -> FE:Redirect to thankyou page
+2019 -> "Redis":Push order number to the queue
+"Redis" --> 2019:Response
+2019 -> 2019:Redirect to thankyou page
+2019 --> FE: Response
 FE -> "Direct Billing Bundle UI":Trigger onOrderComplete event <font color=red>
+
+"Cronjob www" -> "Redis":Pop order number from queue
+"Redis" --> "Cronjob www": Response
+"Cronjob www" -> "Commerce Insurance":POST /insurances/cart-status ORDER_PLACE_PLACED
+"Commerce Insurance" -> "Direct Billing Backend":POST /carts/{{cart-id}}/update-status ORDER_PLACE_PLACED
+"Direct Billing Backend" --> "Commerce Insurance":Response
+"Commerce Insurance" --> "Cronjob www":Response
+
+
 
 
 @enduml
