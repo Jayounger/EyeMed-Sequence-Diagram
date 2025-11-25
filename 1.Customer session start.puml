@@ -12,25 +12,37 @@ database "DynamoDB" #yellow
 database "Redis" #yellow
 database "Mysql" #fdda14
 
-
 autonumber
 Customer -> FE:Customer opens our website
-FE -> "Webservice":POST /insurance/sessions/start
-"Webservice" -> "Commerce Insurance":POST /sessions/start
-"Commerce Insurance" -> "Commerce Insurance":Parse the JWT token to check whether the customer is logged in
-"Commerce Insurance" -> "DynamoDB":Get the session status
-"DynamoDB" --> "Commerce Insurance":Response
-alt If need to call session start is not empty
-    "Commerce Insurance" -> "Direct Billing Backend":POST /commerce-session/start
-    "Direct Billing Backend" --> "Commerce Insurance":Response
+
+par Toggle接口
+    FE -> "Webservice":GET /insurance/toggle
+    "Webservice" -> "Commerce Insurance":GET /toggle
+    "Commerce Insurance" --> "Webservice":Response status
+    alt status == 'disabled'
+        "Webservice" --> FE:status disabled
+        FE -> FE:Skip loading Bundle UI
+    else status != 'disabled'
+        "Webservice" --> FE:status enabled
+        FE -> "Direct Billing Bundle UI":Load Bundle js
+        "Direct Billing Bundle UI" --> FE:Response
+        FE -> FE:Init widget
+        "Direct Billing Bundle UI" -> FE:Hook function getCustomer
+        FE --> "Direct Billing Bundle UI":Response customer info from local or users if logged in
+    end
+else Start接口
+    FE -> "Webservice":POST /insurance/sessions/start
+    "Webservice" -> "Commerce Insurance":POST /sessions/start
+    "Commerce Insurance" -> "Commerce Insurance":Parse the JWT token to check whether the customer is logged in
+    "Commerce Insurance" -> "DynamoDB":Get the session status
+    "DynamoDB" --> "Commerce Insurance":Response
+    alt If need to call session start is not empty
+        "Commerce Insurance" -> "Direct Billing Backend":POST /commerce-session/start
+        "Direct Billing Backend" --> "Commerce Insurance":Response
+    end
+    "Commerce Insurance" --> "Webservice":Response
+    "Webservice" --> FE:Response
+    FE -> FE:Rerender toggleWidget/drawerWidget
 end
-"Commerce Insurance" --> "Webservice": Response
-"Webservice" --> FE:Response
-FE -> "Direct Billing Bundle UI":Load Bundle js
-"Direct Billing Bundle UI" --> FE:Response
-FE -> FE: Init widget
-"Direct Billing Bundle UI" -> FE: Hook function getCustomer
-FE --> "Direct Billing Bundle UI":Response customer info from session start request body
 
 @enduml
-

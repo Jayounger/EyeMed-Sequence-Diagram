@@ -13,30 +13,15 @@ database "Mysql" #fdda14
 
 autonumber
 Customer -> "Direct Billing Bundle UI":User fills in the insurance account and clicks the "Apply insurance"
-"Direct Billing Bundle UI" -> FE:Hook function getCustomer
-
-alt If it is a guest customer
-    FE --> "Direct Billing Bundle UI":Response guest customer info
-else If it is a login customer
-    FE -> "Webservice":GET /users/{user-id}
-    "Webservice" -> "Commerce Customer":GET /users/{user-id}
-    "Commerce Customer" --> "Webservice":Response
-    "Webservice" --> FE:Response
-    FE --> "Direct Billing Bundle UI":Response login customer info
-end
 
 "Direct Billing Bundle UI" -> FE:Hook function getCartItemDetails
-alt If cartId is empty
-    FE --> "Direct Billing Bundle UI":Response {}
-else If cartId is not empty
-    FE -> "Webservice":GET /insurances/cart-products
-    "Webservice" -> "Commerce Insurance":GET /insurances/cart-products
-    "Commerce Insurance" -> 2019:GET /cart
-    2019 --> "Commerce Insurance":Response
-    "Commerce Insurance" --> "Webservice":Response
-    "Webservice" --> FE:Response
-    FE --> "Direct Billing Bundle UI":Response product bundle
-end
+FE -> "Webservice":GET /insurances/cart-products
+"Webservice" -> "Commerce Insurance":GET /insurances/cart-products
+"Commerce Insurance" -> 2019:GET /cart
+2019 --> "Commerce Insurance":Response
+"Commerce Insurance" --> "Webservice":Response
+"Webservice" --> FE:Response
+FE --> "Direct Billing Bundle UI":Response product bundle
 
 "Direct Billing Bundle UI" -> "Direct Billing Backend": PUT /claim-records
 

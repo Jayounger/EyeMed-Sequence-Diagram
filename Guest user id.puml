@@ -15,20 +15,13 @@ end note
 Nextjs -> Cookie: Get guest user id
 Cookie --> Nextjs: Response
 alt Guest user id is **empty**
-    Nextjs -> Nextjs: Generate new guest user id
-    Nextjs -> Cookie: Save guest user id
-    Cookie --> Nextjs: Response
-end
-
-Nextjs -> www: GET /system/visitor-analysis
-www -> Cookie: Get guest user id
-Cookie --> www: Response
-alt Guest user id is **empty**
-    www -> www: Generate new guest user id
-    www -> Cookie: Save guest user id
+    Nextjs -> www: GET /system/visitor-analysis
+    www -> Cookie: Get guest user id
     Cookie --> www: Response
+    www --> Nextjs: Response guest user id
+    Nextjs -> Nextjs: Continue subsequent operations
 else
-    www --> Nextjs: Response
+    Nextjs -> Nextjs: Use cookie and continue subsequent operations
 end
 
 
