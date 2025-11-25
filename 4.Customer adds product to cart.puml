@@ -29,7 +29,7 @@ end
 "2019" -> FE:Redirect to cart page
 FE -> FE:Show cart page
 "Direct Billing Backend" --> "Direct Billing Bundle UI":Sync updated products
-"Direct Billing Bundle UI" -> "Direct Billing Bundle UI":Update bundle UI <font color=red>???
+"Direct Billing Bundle UI" -> "Direct Billing Bundle UI":Update bundle UI
 
 @enduml
 
